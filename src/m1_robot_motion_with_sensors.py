@@ -4,8 +4,8 @@ wait-until-event pattern, in the context of robot motion that uses sensors.
 
 Authors: David Mutchler, Vibha Alangar, Matt Boutell, Dave Fisher,
          Mark Hays, Amanda Stouder, Aaron Wilkin, their colleagues,
-         and PUT_YOUR_NAME_HERE.
-"""  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
+         and Zach Kelly.
+"""  # Done: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 import ev3dev.ev3 as ev3
 import time
@@ -38,7 +38,7 @@ def run_test_wait_for_seconds():
 def wait_for_seconds():
     """ Prints Hello, waits for 3 seconds, then prints Goodbye. """
     # -------------------------------------------------------------------------
-    # TODO: 2. With your instructor, implement and test this function.
+    # Done: 2. With your instructor, implement and test this function.
     #   IMPORTANT:  Do NOT use the    time.sleep   function
     #               anywhere in this project.
     #               (Exception: Use it in test-functions to separate tests.)
@@ -51,6 +51,11 @@ def wait_for_seconds():
     #   NOTE: this function has nothing to do with robots,
     #   but its concepts will be useful in the forthcoming robot exercises.
     # -------------------------------------------------------------------------
+    print('Hello')
+    start = time.time()
+    while time.time() - start < 3:
+        pass
+    print('Goodbye')
 
 
 def run_test_init():
@@ -60,9 +65,15 @@ def run_test_init():
     print('Testing the   __init__   method of the SimpleRoseBot class:')
     print('--------------------------------------------------')
     # -------------------------------------------------------------------------
-    # TODO: 3. Implement this function, then implement the   __init__   method
+    # Done: 3. Implement this function, then implement the   __init__   method
     #   of the SimpleRoseBot class, then use this function to test __init__.
     # -------------------------------------------------------------------------
+    robot = SimpleRoseBot()
+    robot.go(70, 70)
+    start = time.time()
+    while time.time() - start < 3:
+        pass
+    robot.stop()
 
 
 def run_test_go_and_stop():
@@ -72,10 +83,21 @@ def run_test_go_and_stop():
     print('Testing the  go  and  stop  methods of the SimpleRoseBot class:')
     print('--------------------------------------------------')
     # -------------------------------------------------------------------------
-    # TODO: 4. Implement this function, then implement the   go  and   stop
+    # Done: 4. Implement this function, then implement the   go  and   stop
     #   methods of the SimpleRoseBot class, then use this function
     #   to test both   go   and   stop   at the same time.
     # -------------------------------------------------------------------------
+    robot = SimpleRoseBot()
+    robot.go(40, 70)
+    start = time.time()
+    while time.time() - start < 3:
+        pass
+    robot.go(100, 0)
+    start = time.time()
+    while time.time() - start < 5:
+        pass
+    robot.stop()
+
 
 
 def run_test_go_straight_for_seconds():
@@ -85,10 +107,14 @@ def run_test_go_straight_for_seconds():
     print('Testing the   go_straight_for_seconds   method of SimpleRoseBot:')
     print('--------------------------------------------------')
     # -------------------------------------------------------------------------
-    # TODO: 5. Implement this function, then implement the
+    # Done: 5. Implement this function, then implement the
     #   go_straight_for_seconds   method of the SimpleRoseBot class,
     #   then use this function to test that method.
     # -------------------------------------------------------------------------
+    robot = SimpleRoseBot()
+    robot.go_straight_for_seconds(5, 50)
+    robot.go_straight_for_seconds(10, 100)
+    robot.stop()
 
 
 def run_test_go_straight_for_inches():
@@ -98,10 +124,14 @@ def run_test_go_straight_for_inches():
     print('Testing the   go_straight_for_inches   method of SimpleRoseBot:')
     print('--------------------------------------------------')
     # -------------------------------------------------------------------------
-    # TODO: 6. Implement this function, then implement the
+    # Done: 6. Implement this function, then implement the
     #   go_straight_for_inches   method of the SimpleRoseBot class,
     #   then use this function to test that method.
     # -------------------------------------------------------------------------
+    robot = SimpleRoseBot()
+    robot.go_straight_for_inches(5)
+    robot.go_straight_for_inches(10)
+    robot.stop()
 
 
 def run_test_go_straight_until_black():
@@ -111,16 +141,57 @@ def run_test_go_straight_until_black():
     print('Testing the   go_straight_until_black   method of SimpleRoseBot:')
     print('--------------------------------------------------')
     # -------------------------------------------------------------------------
-    # TODO: 7. Implement this function, then implement the
+    # Done: 7. Implement this function, then implement the
     #   go_straight_until_black   method of the SimpleRoseBot class,
     #   then use this function to test that method.
     # -------------------------------------------------------------------------
+    robot = SimpleRoseBot()
+    robot.go_straight_until_black()
+    robot.go_straight_until_black()
+    robot.stop()
 
 
 ###############################################################################
 # Put your   SimpleRoseBot    class here (below this comment).
 # Your instructor may help you get started.
 ###############################################################################
+
+class SimpleRoseBot(object):
+    def __init__(self):
+        self.left_wheel_motor = Motor('B')
+        self.right_wheel_motor = Motor('C')
+        self.color_sensor = ColorSensor(3)
+
+    def go(self, left_speed, right_speed):
+        self.left_wheel_motor.turn_on(left_speed)
+        self.right_wheel_motor.turn_on(right_speed)
+
+    def stop(self):
+        self.left_wheel_motor.turn_off()
+        self.right_wheel_motor.turn_off()
+
+    def go_straight_for_seconds(self, seconds, speed):
+        robot = SimpleRoseBot()
+        robot.go(speed, speed)
+        start = time.time()
+        while time.time() - start < seconds:
+            pass
+        robot.stop()
+
+    def go_straight_for_inches(self, inches):
+        robot = SimpleRoseBot()
+        robot.left_wheel_motor.reset_position()
+        robot.go(25, 25)
+        while robot.left_wheel_motor.get_position() / 360 * 1.3 * math.pi < inches:
+            pass
+        robot.stop()
+
+    def go_straight_until_black(self):
+        robot = SimpleRoseBot()
+        robot.go(100, 100)
+        while robot.color_sensor.get_reflected_light_intensity() > 20:
+            pass
+        robot.stop()
 
 
 ###############################################################################
